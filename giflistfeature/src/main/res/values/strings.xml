@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Job List Fragment Feature</string>
+
+    <string name="action_settings">Settings</string>
+
+
+    <string name="full_story_button">sdf</string>
+    <string name="no_items_stub">No items, sorry \n Have fun while you\'re unemployed</string>
+
+
+</resources>

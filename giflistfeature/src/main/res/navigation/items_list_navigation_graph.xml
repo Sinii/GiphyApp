@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/items_list_navigation_graph"
+    app:startDestination="@+id/gifListFragment">
+
+    <fragment
+        android:id="@+id/gifListFragment"
+        android:name="com.anton.giflistfeature.ui.GifListFragment"
+        android:label="JobListFragment"
+        tools:layout="@layout/fragment_gif_list">
+        <action
+            android:id="@+id/action_gifListFragment_to_gifDescriptionFragment"
+            app:destination="@id/gifDescriptionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/gifDescriptionFragment"
+        android:name="com.example.gifdescriptionfeature.ui.GifDescriptionFragment"
+        android:label="JobDescriptionFragment"
+        tools:layout="@layout/fragment_gif_description"></fragment>
+
+
+</navigation>
