@@ -9,7 +9,6 @@ import com.example.gifdescriptionfeature.databinding.FragmentGifDescriptionBindi
 import com.example.utils.dLog
 
 class GifDescriptionFragment : BaseFragment<FragmentGifDescriptionBinding, ViewModelFactory>() {
-
     override fun provideListOfViewModels(): Array<Class<*>> = arrayOf(
         GifDescriptionViewModel::class.java
     )
@@ -22,6 +21,7 @@ class GifDescriptionFragment : BaseFragment<FragmentGifDescriptionBinding, ViewM
                 when (viewModel) {
                     is GifDescriptionViewModel -> {
                         "provideActionsBinding GifDescriptionViewModel".dLog()
+
                         viewModel.gifItem =
                             arguments?.getParcelable(GifItem::class.toString())
 

@@ -1,10 +1,8 @@
 package com.anton.giflistfeature.ui
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anton.giflistfeature.R
@@ -20,7 +18,6 @@ import com.example.interfaces.GifItemClickListener
 import com.example.interfaces.OnPagingScrollListener
 import com.example.usecase.gif.GetListOfTrendingGifsUseCase
 import com.example.utils.dLog
-import com.example.utils.toSharedPair
 
 
 class GifListFragment : BaseFragment<FragmentGifListBinding, ViewModelFactory>() {
@@ -67,34 +64,16 @@ class GifListFragment : BaseFragment<FragmentGifListBinding, ViewModelFactory>()
 
 
                         val adapter = GifAdapter(ArrayList(), object : GifItemClickListener {
-                            @SuppressLint("ResourceType")
                             override fun onClick(gifItem: GifItem, sharedView: View?) {
-                                val extras = if (sharedView != null)
-                                    FragmentNavigatorExtras(
-                                        sharedView toSharedPair SHARED_LOGO_VIEW_KEY
-                                    )
-                                else
-                                    null
                                 val bundle = Bundle()
                                     .apply {
                                         putParcelable(GifItem::class.toString(), gifItem)
                                     }
-                                if (extras != null) {
-                                    //todo fix id
-                                    findNavController()
-                                        .navigate(
-                                            R.id.action_gifListFragment_to_gifDescriptionFragment,
-                                            bundle,
-                                            null,
-                                            extras
-                                        )
-                                } else {
-                                    findNavController()
-                                        .navigate(
-                                            R.id.action_gifListFragment_to_gifDescriptionFragment,
-                                            bundle
-                                        )
-                                }
+                                findNavController()
+                                    .navigate(
+                                        R.id.action_gifListFragment_to_gifDescriptionFragment,
+                                        bundle
+                                    )
                             }
                         })
                         binding.itemsRecyclerView.layoutManager = layoutManager
@@ -129,6 +108,5 @@ class GifListFragment : BaseFragment<FragmentGifListBinding, ViewModelFactory>()
 
     companion object {
         const val STUB_ITEMS_COUNT = 15
-        const val SHARED_LOGO_VIEW_KEY = "_image_transition"
     }
 }
