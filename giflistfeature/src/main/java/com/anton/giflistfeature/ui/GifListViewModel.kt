@@ -36,7 +36,7 @@ class GifListViewModel
     override fun restoreViewModel() {
         val noItems = gifList.value?.isNotEmpty() != true
         "noItems  = $noItems".dLog()
-        if (noItems) doAutoMainWork() else showNoItemsState()
+        if (noItems) doAutoMainWork() else showItemsState()
     }
 
     private fun getTrendingGifsJob(page: Int) = doWork {
