@@ -9,7 +9,6 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.base.viewmodel.BaseViewModel
 import com.example.base.viewmodel.ViewModelCommands
 import com.example.interfaces.ActivityDefaultBehavior
@@ -27,6 +26,7 @@ abstract class BaseFragment<B : ViewDataBinding, VMF : ViewModelProvider.Factory
     lateinit var viewModelFactory: VMF
 
     private var viewModelList: HashSet<BaseViewModel> = HashSet()
+    private var firstLaunch = true
 
     abstract fun provideListOfViewModels(): Array<Class<*>>
 
@@ -38,39 +38,10 @@ abstract class BaseFragment<B : ViewDataBinding, VMF : ViewModelProvider.Factory
 
     open fun busEvents(command: ViewModelCommands, viewModelList: Set<*>, binding: B): Boolean {
         when (command) {
-            is ViewModelCommands.NavigateBack -> {
-                try {
-                    hideKeyboard()
-                    findNavController().popBackStack()
-                } catch (e: java.lang.IllegalArgumentException) {
-                    e.printStackTrace()
-                    "trying to navigate after closing page".eLog()
-                }
-            }
-            is ViewModelCommands.NavigateToIntent -> {
-                try {
-                    hideKeyboard()
-                    startActivity(command.intent)
-                } catch (e: java.lang.IllegalArgumentException) {
-                    e.printStackTrace()
-                    "trying to navigate after closing page".eLog()
-                }
-            }
-            is ViewModelCommands.NavigateTo -> {
-                try {
-                    hideKeyboard()
-                    findNavController().navigate(command.directions)
-                } catch (e: java.lang.IllegalArgumentException) {
-                    e.printStackTrace()
-                    "trying to navigate after closing page".eLog()
-                }
-            }
             is ViewModelCommands.ShowError ->
                 (provideLifecycleOwner().requireActivity() as ActivityDefaultBehavior).showError(
                     command.text
                 )
-            is ViewModelCommands.HideKeyboard ->
-                this@BaseFragment.hideKeyboard()
         }
         return true
     }
@@ -100,7 +71,6 @@ abstract class BaseFragment<B : ViewDataBinding, VMF : ViewModelProvider.Factory
             )
 
         this@BaseFragment.hideKeyboard()
-        var firstLaunch = true
         provideListOfViewModels()
             .forEach { viewModelClass ->
                 try {
@@ -132,16 +102,16 @@ abstract class BaseFragment<B : ViewDataBinding, VMF : ViewModelProvider.Factory
 
         binding.lifecycleOwner = provideLifecycleOwner().viewLifecycleOwner
         binding.apply { provideActionsBinding().invoke(this, viewModelList) }
-        viewModelList.forEach {
-            if (firstLaunch) it.doAutoMainWork() else it.restoreViewModel()
-        }
-
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
         "${provideLifecycleOwner().javaClass} onResume".dLog()
+        viewModelList.forEach {
+            "firstLaunch = $firstLaunch it = $it".dLog()
+            if (firstLaunch) it.doAutoMainWork() else it.restoreViewModel()
+        }
     }
 
     override fun onStop() {

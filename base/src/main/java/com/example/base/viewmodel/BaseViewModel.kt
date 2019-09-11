@@ -1,16 +1,19 @@
 package com.example.base.viewmodel
 
-import android.content.Intent
+import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavDirections
+import com.example.base.R
 import com.example.utils.dLog
 import kotlinx.coroutines.*
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 abstract class BaseViewModel : ViewModel() {
+    @Inject
+    lateinit var appContext: Context
 
     val viewModelCommands = SingleLiveEvent<ViewModelCommands>()
     private var baseViewModelJob = SupervisorJob()
@@ -18,81 +21,24 @@ abstract class BaseViewModel : ViewModel() {
 
     abstract fun doAutoMainWork()
 
-    fun <P> doInfiniteRepeatWork(
-        doBlock: suspend CoroutineScope.() -> P
-    ): Job {
-        return baseViewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                while (isActive) {
-                    try {
-                        doBlock.invoke(this)
-                    } catch (e: UnknownHostException) {
-                        e.printStackTrace()
-                        showError("Server is unreachable")
-                    } catch (e: SocketTimeoutException) {
-                        e.printStackTrace()
-                        showError("No internet connection")
-                    } catch (e: ConnectException) {
-                        e.printStackTrace()
-                        showError("Connection error")
-                    }
-                }
-            }
-        }
-    }
-
     fun <P> doWork(doBlock: suspend CoroutineScope.() -> P): Job {
         return doCoroutineWork(doBlock, baseViewModelScope, Dispatchers.IO)
-    }
-
-    fun <P> doWorkInMainThread(doBlock: suspend CoroutineScope.() -> P) {
-        doCoroutineWork(doBlock, baseViewModelScope, Dispatchers.Main)
     }
 
     fun cancelChildren() {
         baseViewModelJob.cancelChildren()
     }
 
-    open fun restoreViewModel() {
-        doWorkInMainThread {
-            viewModelCommands.postValue(ViewModelCommands.DataLoaded)
-        }
-    }
+    open fun restoreViewModel() {}
 
     override fun onCleared() {
         "onCleared".dLog()
         baseViewModelScope.cancel()
     }
 
-    fun navigateBack() {
-        doWorkInMainThread {
-            viewModelCommands.postValue(ViewModelCommands.NavigateBack)
-        }
-    }
-
-    fun navigate(intent: Intent) {
-        doWorkInMainThread {
-            viewModelCommands.postValue(ViewModelCommands.NavigateToIntent(intent))
-        }
-    }
-
-    fun navigate(directions: NavDirections) {
-        doWorkInMainThread {
-            viewModelCommands.postValue(ViewModelCommands.NavigateTo(directions))
-        }
-    }
-
     fun showError(text: String?) {
         if (text != null) {
-            doWorkInMainThread {
-                viewModelCommands.postValue(ViewModelCommands.ShowError(text))
-            }
-        }
-    }
-
-    fun hideKeyboard() {
-        doWorkInMainThread {
-            viewModelCommands.postValue(ViewModelCommands.HideKeyboard)
+            viewModelCommands.postValue(ViewModelCommands.ShowError(text))
         }
     }
 
@@ -107,13 +53,17 @@ abstract class BaseViewModel : ViewModel() {
                     doBlock.invoke(this)
                 } catch (e: UnknownHostException) {
                     e.printStackTrace()
-                    showError("Server is unreachable")
+                    val serverIsUnreachableMessage =
+                        appContext.getString(R.string.server_is_unreachable)
+                    showError(serverIsUnreachableMessage)
                 } catch (e: SocketTimeoutException) {
                     e.printStackTrace()
-                    showError("No internet connection")
+                    val noInternetConnection = appContext.getString(R.string.no_internet_connection)
+                    showError(noInternetConnection)
                 } catch (e: ConnectException) {
                     e.printStackTrace()
-                    showError("Connection error")
+                    val connectionError = appContext.getString(R.string.connection_error)
+                    showError(connectionError)
                 }
             }
         }

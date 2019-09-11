@@ -17,11 +17,6 @@ class OnPagingScrollListener(
             val totalItemCount = layoutManager.itemCount
             val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
             val lastVisibleItemPosition = getLastVisibleItem(lastVisibleItemPositions)
-
-//            "onScrolled visibleItemCount = $visibleItemCount totalItemCount = $totalItemCount lastVisibleItemPosition = $lastVisibleItemPosition".dLog()
-//            "onScrolled  visibleItemCount + lastVisibleItemPosition = ${visibleItemCount + lastVisibleItemPosition} totalItemCount - (pageSize / 3) = ${totalItemCount - (pageSize / 3)}".dLog()
-//            "onScrolled  totalItemCount -  lastVisibleItemPosition = ${totalItemCount - lastVisibleItemPosition} loadFactor = $loadFactor".dLog()
-
             if (totalItemCount - lastVisibleItemPosition <= loadFactor
                 && lastVisibleItemPosition >= 0
             ) {

@@ -42,9 +42,6 @@ buildscript {
     ext.converterMoshiVersion = '2.6.1'
     ext.glideVersion = '4.9.0'
 
-    ext.skeletonVersion = '1.1.2'
-    ext.shimmerlayoutVersion = '2.1.0'
-
     repositories {
         google()
         jcenter()
@@ -52,7 +49,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:${gradleVersion}"
+        classpath "com.android.tools.build:gradle:$gradleVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"

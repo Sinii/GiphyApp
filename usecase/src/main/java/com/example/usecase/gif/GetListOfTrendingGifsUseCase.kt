@@ -11,9 +11,9 @@ class GetListOfTrendingGifsUseCase
     private val convertGifToGifItemUseCase: ConvertGifToGifItemUseCase
 ) : BaseUseCase<GetListOfTrendingGifsUseCase.Params, GetListOfTrendingGifsUseCase.Result>() {
     override suspend fun doWork(params: Params): Result {
-        val offset = ITEMS_LIMIT * params.page
+        val offset = ITEMS_PAGINATION_COUNT * params.page
         val result = gifRepository
-            .doWork(GifRepository.Params(ITEMS_LIMIT, offset))
+            .doWork(GifRepository.Params(ITEMS_PAGINATION_COUNT, offset))
         val gifs = result
             .gifs
             ?.map {
@@ -28,6 +28,6 @@ class GetListOfTrendingGifsUseCase
     class Result(val items: List<GifItem>?, val errorMessage: String?)
 
     companion object {
-        const val ITEMS_LIMIT = 30
+        const val ITEMS_PAGINATION_COUNT = 30
     }
 }
