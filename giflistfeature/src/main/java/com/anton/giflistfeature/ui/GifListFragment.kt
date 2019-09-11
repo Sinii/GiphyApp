@@ -8,47 +8,19 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anton.giflistfeature.R
 import com.anton.giflistfeature.databinding.FragmentGifListBinding
 import com.anton.giflistfeature.ui.adapter.GifAdapter
-import com.ethanhua.skeleton.RecyclerViewSkeletonScreen
-import com.ethanhua.skeleton.Skeleton
 import com.example.base.di.ViewModelFactory
 import com.example.base.ui.BaseFragment
-import com.example.base.viewmodel.ViewModelCommands
 import com.example.gif.GifItem
 import com.example.interfaces.GifItemClickListener
 import com.example.interfaces.OnPagingScrollListener
 import com.example.usecase.gif.GetListOfTrendingGifsUseCase
-import com.example.utils.dLog
 
 
 class GifListFragment : BaseFragment<FragmentGifListBinding, ViewModelFactory>() {
-    private var skeletonScreen: RecyclerViewSkeletonScreen? = null
 
     override fun provideListOfViewModels(): Array<Class<*>> = arrayOf(
         GifListViewModel::class.java
     )
-
-    override fun busEvents(
-        command: ViewModelCommands,
-        viewModelList: Set<*>,
-        binding: FragmentGifListBinding
-    ): Boolean {
-        viewModelList.forEach { viewModel ->
-            when {
-                command is ViewModelCommands.DataStartLoading
-                        && viewModel is GifListViewModel -> {
-                    "DataStartLoading".dLog()
-                    //skeletonScreen?.show()
-                }
-                command is ViewModelCommands.DataLoaded
-                        && viewModel is GifListViewModel -> {
-                    "DataLoaded".dLog()
-
-                    skeletonScreen?.hide()
-                }
-            }
-        }
-        return super.busEvents(command, viewModelList, binding)
-    }
 
     override fun provideActionsBinding(): (FragmentGifListBinding, Set<*>) -> Unit =
         { binding, viewModelList ->
@@ -56,13 +28,11 @@ class GifListFragment : BaseFragment<FragmentGifListBinding, ViewModelFactory>()
                 when (viewModel) {
                     is GifListViewModel -> {
                         binding.vm = viewModel
-                        val layoutManager =
-                            StaggeredGridLayoutManager(
-                                2,
-                                StaggeredGridLayoutManager.VERTICAL
-                            )
-
-
+                        val spanCount = 2
+                        val layoutManager = StaggeredGridLayoutManager(
+                            spanCount,
+                            StaggeredGridLayoutManager.VERTICAL
+                        )
                         val adapter = GifAdapter(ArrayList(), object : GifItemClickListener {
                             override fun onClick(gifItem: GifItem, sharedView: View?) {
                                 val bundle = Bundle()
@@ -78,25 +48,16 @@ class GifListFragment : BaseFragment<FragmentGifListBinding, ViewModelFactory>()
                         })
                         binding.itemsRecyclerView.layoutManager = layoutManager
                         binding.itemsRecyclerView.adapter = adapter
-
                         binding.itemsRecyclerView.addOnScrollListener(
                             OnPagingScrollListener(
                                 { viewModel.loadMore() },
                                 layoutManager,
-                                GetListOfTrendingGifsUseCase.ITEMS_LIMIT
+                                GetListOfTrendingGifsUseCase.ITEMS_PAGINATION_COUNT
                             )
                         )
-                        viewModel.jobsList.observe(this, Observer { list ->
+                        viewModel.gifList.observe(this, Observer { list ->
                             adapter.updateItems(list)
                         })
-                        skeletonScreen = Skeleton
-                            .bind(binding.itemsRecyclerView)
-                            .adapter(adapter)
-                            .load(R.layout.item_gif_skeleton)
-                            .angle(0)
-                            .color(R.color.shineLoadingColor)
-                            .count(STUB_ITEMS_COUNT)
-                            .show()
                     }
                 }
             }
@@ -105,8 +66,4 @@ class GifListFragment : BaseFragment<FragmentGifListBinding, ViewModelFactory>()
     override fun provideLayout() = R.layout.fragment_gif_list
 
     override fun provideLifecycleOwner() = this
-
-    companion object {
-        const val STUB_ITEMS_COUNT = 15
-    }
 }

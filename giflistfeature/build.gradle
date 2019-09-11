@@ -59,8 +59,6 @@ dependencies {
 
     // recycler view
     implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
-    implementation "com.ethanhua:skeleton:$skeletonVersion"
-    implementation "io.supercharge:shimmerlayout:$shimmerlayoutVersion"
 
     // requester
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"

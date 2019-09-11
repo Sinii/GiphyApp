@@ -30,26 +30,19 @@ class GifDescriptionViewModel
         val width = screenWidth ?: item.gifWidth
         val height = ((screenWidth ?: item.gifWidth) / item.gifWidth) * item.gifHeight
         "updateDimensions width = $width height = $height".dLog()
-
         gifDimension.postValue(width to height)
-
     }
 
     private fun newInfinityRandomJob() = doWork {
         while (isActive) {
             gifItem?.let {
-                "infinityRandomJob it.id = ${it.id}".dLog()
-                "infinityRandomJob it.gifUrl = ${it.gifUrl}".dLog()
-                "infinityRandomJob it.previewUrl = ${it.previewUrl}".dLog()
-
                 gifUrl.postValue(it.gifUrl)
                 updateDimensions(it)
             }
-            delay(5000L)
+            delay(10000L)
             val result = getRandomGifUseCase
                 .doWork(GetRandomGifUseCase.Params())
-            gifItem = result
-                .item
+            gifItem = result.item
             result.errorMessage?.let {
                 showError(it)
             }

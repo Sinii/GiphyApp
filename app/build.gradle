@@ -50,14 +50,11 @@ dependencies {
     implementation "com.google.android.material:material:$materialVersion"
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
     implementation "androidx.core:core-ktx:$ktxVersion"
-
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
     // recycler view
     implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
-    implementation "com.ethanhua:skeleton:$skeletonVersion"
-    implementation "io.supercharge:shimmerlayout:$shimmerlayoutVersion"
 
     // requester
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
