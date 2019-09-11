@@ -116,16 +116,11 @@ abstract class BaseFragment<B : ViewDataBinding, VMF : ViewModelProvider.Factory
 
     override fun onStop() {
         "${provideLifecycleOwner().javaClass} onStop + $this".dLog()
-
-        viewModelList.forEach { viewModel ->
-            viewModel.cancelChildren()
-        }
         super.onStop()
     }
 
     override fun onDestroy() {
         "${provideLifecycleOwner().javaClass} onDestroy".dLog()
-
         viewModelList.clear()
         super.onDestroy()
     }

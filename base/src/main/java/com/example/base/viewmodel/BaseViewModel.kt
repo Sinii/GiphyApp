@@ -25,10 +25,6 @@ abstract class BaseViewModel : ViewModel() {
         return doCoroutineWork(doBlock, baseViewModelScope, Dispatchers.IO)
     }
 
-    fun cancelChildren() {
-        baseViewModelJob.cancelChildren()
-    }
-
     open fun restoreViewModel() {}
 
     override fun onCleared() {
